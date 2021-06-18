@@ -1,5 +1,7 @@
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ClosestPair implements Runnable
 {
@@ -12,11 +14,18 @@ public class ClosestPair implements Runnable
     private Graphics graphics;
     private Thread thread;
 
-    public ClosestPair(String title, int width, int height)
+    private final int numOfPoints;
+    private final Point[] points;
+    ArrayList<Point[]> subPoints;
+
+    public ClosestPair(Point[] points, ArrayList<Point[]> subPoints)
     {
-        TITLE = title;
-        WIDTH = width;
-        HEIGHT = height;
+        numOfPoints = points.length;
+        this.points = points;
+        this.subPoints = subPoints;
+        TITLE = "Closest Pair Visualization";
+        WIDTH = 600;
+        HEIGHT = 500;
         running = false;
         graphicDisplay = null;
         bufferStrategy = null;
@@ -27,6 +36,7 @@ public class ClosestPair implements Runnable
     private void init()
     {
         graphicDisplay = new GraphicDisplay(TITLE, WIDTH, HEIGHT);
+
 
 
     }
@@ -49,6 +59,13 @@ public class ClosestPair implements Runnable
         graphics.clearRect(0, 0, WIDTH, HEIGHT);
 
         // START DRAW
+
+        graphics.setColor(Color.RED);
+
+        for(int i = 0; i < numOfPoints; i++)
+        {
+            graphics.fillOval(points[i].x, points[i].y, 10, 10);
+        }
 
         // END DRAW
 
