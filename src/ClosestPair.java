@@ -82,7 +82,9 @@ public class ClosestPair implements Runnable
         if(pointersStack.empty() && processIndex >= processes.length - 1 && dataIndex >= stepData.size() - 1)
         {
             play = false;
-
+            buttons.getRestartButton().setEnabled(true);
+            buttons.getForwardButton().setEnabled(true);
+            buttons.getSkipButton().setEnabled(true);
         }
         if(buttons.isPressed("Restart") && !play)
         {
@@ -97,6 +99,9 @@ public class ClosestPair implements Runnable
         if(buttons.isPressed("Play"))
         {
             play = !play;
+            buttons.getRestartButton().setEnabled(!play);
+            buttons.getForwardButton().setEnabled(!play);
+            buttons.getSkipButton().setEnabled(!play);
         }
         if((buttons.isPressed("Forward") && stepIndex < stepData.size()) || play)
         {

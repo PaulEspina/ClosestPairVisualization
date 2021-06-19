@@ -76,4 +76,24 @@ public class ButtonsPanel extends JPanel implements ActionListener
     {
         return buttonsPressed.containsValue(true);
     }
+
+    public JButton getRestartButton()
+    {
+        return restartButton;
+    }
+
+    public JButton getPlayButton()
+    {
+        return playButton;
+    }
+
+    public JButton getForwardButton()
+    {
+        return forwardButton;
+    }
+
+    public JButton getSkipButton()
+    {
+        return skipButton;
+    }
 }
