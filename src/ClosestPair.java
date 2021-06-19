@@ -1,71 +1,104 @@
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ClosestPair implements Runnable
 {
-    private final String TITLE;
-    private final int WIDTH, HEIGHT;
-
     private Boolean running;
-    private GraphicDisplay graphicDisplay;
+    private Display display;
+    private ButtonsPanel buttons;
     private BufferStrategy bufferStrategy;
     private Graphics graphics;
     private Thread thread;
+    private int width, height;
 
     private final int numOfPoints;
     private final Point[] points;
-    ArrayList<Point[]> subPoints;
+    private final ArrayList<StepData> stepData;
+    private int stepIndex;
+    private boolean play;
 
-    public ClosestPair(Point[] points, ArrayList<Point[]> subPoints)
+    public ClosestPair(Point[] points, ArrayList<StepData> stepData)
     {
-        numOfPoints = points.length;
-        this.points = points;
-        this.subPoints = subPoints;
-        TITLE = "Closest Pair Visualization";
-        WIDTH = 600;
-        HEIGHT = 500;
         running = false;
-        graphicDisplay = null;
+        display = null;
+        buttons = null;
         bufferStrategy = null;
         graphics = null;
         thread = null;
+
+        numOfPoints = points.length;
+        this.points = points;
+        this.stepData = stepData;
+        stepIndex = 0;
+        play = false;
     }
 
     private void init()
     {
-        graphicDisplay = new GraphicDisplay(TITLE, WIDTH, HEIGHT);
+        display = new Display();
+        width = display.getFrame().getWidth();
+        height = display.getFrame().getHeight();
 
+        buttons = display.getButtonsPanel();
 
-
+        stepIndex = 0;
+        play = false;
     }
 
     private void update()
     {
-
+        if(buttons.isPressed("Restart") && !play)
+        {
+            stepIndex = 0;
+        }
+        if(buttons.isPressed("Back") && !play && stepIndex > 0)
+        {
+            stepIndex--;
+        }
+        if(buttons.isPressed("Play"))
+        {
+            play = !play;
+        }
+        if(buttons.isPressed("Forward") && !play && stepIndex < stepData.size() - 1)
+        {
+            stepIndex++;
+        }
+        if(buttons.isPressed("Skip") && !play)
+        {
+            stepIndex = stepData.size() - 1;
+        }
+        if(play && stepIndex < stepData.size() - 1)
+        {
+            stepIndex++;
+        }
+        buttons.resetButtons();
     }
 
     private void render()
     {
-        bufferStrategy = graphicDisplay.getCanvas().getBufferStrategy();
+        bufferStrategy = display.getCanvas().getBufferStrategy();
         if(bufferStrategy == null)
         {
-            graphicDisplay.getCanvas().createBufferStrategy(3);
+            display.getCanvas().createBufferStrategy(2);
             return;
         }
 
         graphics = bufferStrategy.getDrawGraphics();
-        graphics.clearRect(0, 0, WIDTH, HEIGHT);
+        graphics.clearRect(0, 0, width, height);
 
         // START DRAW
 
-        graphics.setColor(Color.RED);
-
+        // Draw Points
         for(int i = 0; i < numOfPoints; i++)
         {
-            graphics.fillOval(points[i].x, points[i].y, 10, 10);
+            graphics.drawOval(points[i].x - 3, points[i].y - 3, 6, 6);
         }
+
+        graphics.setColor(Color.RED);
+
 
         // END DRAW
 
