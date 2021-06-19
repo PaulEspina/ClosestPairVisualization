@@ -53,49 +53,71 @@ public class ClosestPair implements Runnable
 
     private void update()
     {
-        int lineCount = display.getCodeSim().getLineCount(0) - 1;
+        CodeSim codeSim = display.getCodeSim();
+        JScrollBar scrollBar = codeSim.getScrollPane().getVerticalScrollBar();
+        int lineCount = codeSim.getLineCount(0) - 1;
         if(buttons.isPressed("Restart") && !play)
         {
             lineIndex = 0;
             stepIndex = 0;
+            scrollBar.setValue(0);
         }
-        if(buttons.isPressed("Back") && !play && lineIndex > 0)
+        if(buttons.isPressed("FastBack") && !play && stepIndex > 0)
         {
-            lineIndex--;
-            if(lineIndex % lineCount == lineCount && stepIndex > 0)
+            lineIndex = 0;
+            stepIndex--;
+            scrollBar.setValue(0);
+        }
+        if(buttons.isPressed("Back") && !play && lineIndex >= 0)
+        {
+            if(lineIndex == 0 && stepIndex > 0)
             {
                 lineIndex = lineCount;
                 stepIndex--;
+                scrollBar.setValue(scrollBar.getMaximum());
+            }
+            else
+            {
+                lineIndex--;
             }
         }
         if(buttons.isPressed("Play"))
         {
             play = !play;
         }
-        if(buttons.isPressed("Forward") && !play && lineIndex < lineCount)
+        if(buttons.isPressed("Forward") && !play && lineIndex <= lineCount)
         {
             lineIndex++;
-            if(lineIndex % lineCount == 0 && stepIndex < stepData.size() - 1)
+            if(lineIndex % (lineCount + 1) == 0 && stepIndex < stepData.size() - 1)
             {
                 lineIndex = 0;
                 stepIndex++;
+                scrollBar.setValue(0);
             }
+        }
+        if(buttons.isPressed("FastForward") && !play && stepIndex < stepData.size() - 1)
+        {
+            lineIndex = 0;
+            stepIndex++;
+            scrollBar.setValue(0);
         }
         if(buttons.isPressed("Skip") && !play)
         {
-            lineIndex = lineCount - 1;
+            lineIndex = lineCount;
             stepIndex = stepData.size() - 1;
+            scrollBar.setValue(0);
         }
-        if(play && lineIndex < lineCount)
+        if(play && lineIndex <= lineCount)
         {
             lineIndex++;
-            if(lineIndex % lineCount == 0 && stepIndex < stepData.size() - 1)
+            if(lineIndex % (lineCount + 1) == 0 && stepIndex < stepData.size() - 1)
             {
                 lineIndex = 0;
                 stepIndex++;
             }
         }
-        System.out.println(lineIndex + ", " + stepIndex);
+        codeSim.setLine(lineIndex);
+
         buttons.resetButtons();
     }
 
