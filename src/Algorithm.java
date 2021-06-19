@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Algorithm
 {
-    public static double solve(Point[] p, Point[] q,  ArrayList<Point[]> subPoints)
+    public static double solve(Point[] p, Point[] q,  ArrayList<StepData> stepData)
     {
         if(p.length <= 3)
         {
@@ -16,8 +16,8 @@ public class Algorithm
         Point[] leftPoints = Arrays.copyOfRange(p, 0, p.length / 2);
         Point[] rightPoints = Arrays.copyOfRange(p, p.length / 2, p.length);
 
-        double dl = solve(leftPoints, q, subPoints);
-        double dr = solve(rightPoints, q, subPoints);
+        double dl = solve(leftPoints, q, stepData);
+        double dr = solve(rightPoints, q, stepData);
         double d = Math.min(dl, dr);
 
         ArrayList<Point> stripP = new ArrayList<>();
@@ -48,8 +48,11 @@ public class Algorithm
 
         double minA = Math.min(d, stripClosest(staticStripP, d));
         double minB = Math.min(d, stripClosest(staticStripQ, d));
+        double min = Math.min(minA, minB);
 
-        return Math.min(minA, minB);
+        stepData.add(new StepData(middle, middlePoint, leftPoints, rightPoints, dl, dr, d, staticStripP, staticStripQ, minA, minB, min));
+
+        return min;
     }
 
     private static double stripClosest(Point[] strip, double d)
