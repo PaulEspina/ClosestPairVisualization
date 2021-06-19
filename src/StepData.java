@@ -2,6 +2,8 @@ import java.awt.*;
 
 public class StepData
 {
+    public Point[] p;
+    public Point[] q;
     public int middle;
     public Point middlePoint;
     public Point[] leftPoints;
@@ -15,8 +17,10 @@ public class StepData
     public double minB;
     public double min;
 
-    public StepData(int middle, Point middlePoint, Point[] leftPoints, Point[] rightPoints, double dl, double dr, double d, Point[] stripP, Point[] stripQ, double minA, double minB, double min)
+    public StepData(Point[] p, Point[] q, int middle, Point middlePoint, Point[] leftPoints, Point[] rightPoints, double dl, double dr, double d, Point[] stripP, Point[] stripQ, double minA, double minB, double min)
     {
+        this.p = p;
+        this.q = q;
         this.middle = middle;
         this.middlePoint = middlePoint;
         this.leftPoints = leftPoints;

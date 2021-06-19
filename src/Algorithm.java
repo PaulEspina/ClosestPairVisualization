@@ -8,7 +8,9 @@ public class Algorithm
     {
         if(p.length <= 3)
         {
-            return bruteForce(p);
+            double min = bruteForce(p);
+            stepData.add(new StepData(p, q, 0, null, null, null, 0, 0, 0, null, null, 0, 0, min));
+            return min;
         }
 
         int middle = p.length / 2;
@@ -50,7 +52,7 @@ public class Algorithm
         double minB = Math.min(d, stripClosest(staticStripQ, d));
         double min = Math.min(minA, minB);
 
-        stepData.add(new StepData(middle, middlePoint, leftPoints, rightPoints, dl, dr, d, staticStripP, staticStripQ, minA, minB, min));
+        stepData.add(new StepData(p, q, middle, middlePoint, leftPoints, rightPoints, dl, dr, d, staticStripP, staticStripQ, minA, minB, min));
 
         return min;
     }
