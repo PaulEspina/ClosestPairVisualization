@@ -10,7 +10,6 @@ public class ButtonsPanel extends JPanel implements ActionListener
 
     private final JButton restartButton;
     private final JButton playButton;
-    private final JButton backButton;
     private final JButton forwardButton;
     private final JButton skipButton;
 
@@ -20,16 +19,13 @@ public class ButtonsPanel extends JPanel implements ActionListener
         setBackground(new Color(30, 10, 75));
         restartButton = new Button("<html><p>&#9198</p></html>");
         restartButton.addActionListener(this);
-        backButton = new Button("<");
-        backButton.addActionListener(this);
         playButton = new Button("<html><p>&#9654</p></html>");
         playButton.addActionListener(this);
-        forwardButton = new Button(">");
+        forwardButton = new Button("<html><p>&#10145</p></html>");
         forwardButton.addActionListener(this);
         skipButton = new Button("<html><p>&#9197</p></html>");
         skipButton.addActionListener(this);
         add(restartButton);
-        add(backButton);
         add(playButton);
         add(forwardButton);
         add(skipButton);
@@ -37,7 +33,6 @@ public class ButtonsPanel extends JPanel implements ActionListener
         // INIT
         buttonsPressed = new HashMap<>();
         buttonsPressed.put("Restart", false);
-        buttonsPressed.put("Back", false);
         buttonsPressed.put("Play", false);
         buttonsPressed.put("Forward", false);
         buttonsPressed.put("Skip", false);
@@ -46,7 +41,6 @@ public class ButtonsPanel extends JPanel implements ActionListener
     public void resetButtons()
     {
         buttonsPressed.replace("Restart", false);
-        buttonsPressed.replace("Back", false);
         buttonsPressed.replace("Play", false);
         buttonsPressed.replace("Forward", false);
         buttonsPressed.replace("Skip", false);
@@ -58,10 +52,6 @@ public class ButtonsPanel extends JPanel implements ActionListener
         if(e.getSource() == restartButton)
         {
             buttonsPressed.replace("Restart", true);
-        }
-        if(e.getSource() == backButton)
-        {
-            buttonsPressed.replace("Back", true);
         }
         if(e.getSource() == playButton)
         {
@@ -80,5 +70,10 @@ public class ButtonsPanel extends JPanel implements ActionListener
     public boolean isPressed(String key)
     {
         return buttonsPressed.get(key);
+    }
+
+    public boolean isPressed()
+    {
+        return buttonsPressed.containsValue(true);
     }
 }
