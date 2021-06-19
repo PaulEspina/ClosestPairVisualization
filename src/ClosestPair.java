@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ClosestPair implements Runnable
 {
@@ -18,6 +19,7 @@ public class ClosestPair implements Runnable
     private final Point[] points;
     private final ArrayList<StepData> stepData;
     private int stepIndex;
+    private int lineIndex;
     private boolean play;
 
     public ClosestPair(Point[] points, ArrayList<StepData> stepData)
@@ -32,6 +34,7 @@ public class ClosestPair implements Runnable
         numOfPoints = points.length;
         this.points = points;
         this.stepData = stepData;
+        Collections.reverse(this.stepData);
         stepIndex = 0;
         play = false;
     }
@@ -50,30 +53,49 @@ public class ClosestPair implements Runnable
 
     private void update()
     {
+        int lineCount = display.getCodeSim().getLineCount(0) - 1;
         if(buttons.isPressed("Restart") && !play)
         {
+            lineIndex = 0;
             stepIndex = 0;
         }
-        if(buttons.isPressed("Back") && !play && stepIndex > 0)
+        if(buttons.isPressed("Back") && !play && lineIndex > 0)
         {
-            stepIndex--;
+            lineIndex--;
+            if(lineIndex % lineCount == lineCount && stepIndex > 0)
+            {
+                lineIndex = lineCount;
+                stepIndex--;
+            }
         }
         if(buttons.isPressed("Play"))
         {
             play = !play;
         }
-        if(buttons.isPressed("Forward") && !play && stepIndex < stepData.size() - 1)
+        if(buttons.isPressed("Forward") && !play && lineIndex < lineCount)
         {
-            stepIndex++;
+            lineIndex++;
+            if(lineIndex % lineCount == 0 && stepIndex < stepData.size() - 1)
+            {
+                lineIndex = 0;
+                stepIndex++;
+            }
         }
         if(buttons.isPressed("Skip") && !play)
         {
+            lineIndex = lineCount - 1;
             stepIndex = stepData.size() - 1;
         }
-        if(play && stepIndex < stepData.size() - 1)
+        if(play && lineIndex < lineCount)
         {
-            stepIndex++;
+            lineIndex++;
+            if(lineIndex % lineCount == 0 && stepIndex < stepData.size() - 1)
+            {
+                lineIndex = 0;
+                stepIndex++;
+            }
         }
+        System.out.println(lineIndex + ", " + stepIndex);
         buttons.resetButtons();
     }
 
@@ -98,6 +120,8 @@ public class ClosestPair implements Runnable
         }
 
         graphics.setColor(Color.RED);
+        Point middlePoint = stepData.get(stepIndex).middlePoint;
+        graphics.drawLine(middlePoint.x, 0, middlePoint.x, height);
 
 
         // END DRAW
