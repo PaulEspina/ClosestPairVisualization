@@ -13,8 +13,12 @@ public class QuickSort
     // axis: 0 for x, 1 for y.
     public static void sort(Point[] arr, int axis)
     {
+        if(arr.length == 0)
+        {
+            return;
+        }
         int left = 0;
-        int right = arr. length - 1;
+        int right = arr.length - 1;
         int pi = partition(arr, left, right, axis);
         sort(arr, left, pi - 1, axis);
         sort(arr, pi + 1, right, axis);
