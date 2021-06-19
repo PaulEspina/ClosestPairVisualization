@@ -292,4 +292,9 @@ public class CodeSim extends JPanel
     {
         return highlightForeGround;
     }
+
+    public int getLineCount(int pageIndex)
+    {
+        return pages.get(pageIndex).size();
+    }
 }
