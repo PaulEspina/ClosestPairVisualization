@@ -11,7 +11,9 @@ public class ButtonsPanel extends JPanel implements ActionListener
     private final JButton restartButton;
     private final JButton playButton;
     private final JButton backButton;
+    private final JButton fastBackButton;
     private final JButton forwardButton;
+    private final JButton fastforwardButton;
     private final JButton skipButton;
 
     public ButtonsPanel()
@@ -20,35 +22,45 @@ public class ButtonsPanel extends JPanel implements ActionListener
         setBackground(new Color(30, 10, 75));
         restartButton = new Button("<html><p>&#9198</p></html>");
         restartButton.addActionListener(this);
+        fastBackButton = new Button("<html><p>&#9194</p></html>");
+        fastBackButton.addActionListener(this);
         backButton = new Button("<");
         backButton.addActionListener(this);
         playButton = new Button("<html><p>&#9654</p></html>");
         playButton.addActionListener(this);
         forwardButton = new Button(">");
         forwardButton.addActionListener(this);
+        fastforwardButton = new Button("<html><p>&#9193</p></html>");
+        fastforwardButton.addActionListener(this);
         skipButton = new Button("<html><p>&#9197</p></html>");
         skipButton.addActionListener(this);
         add(restartButton);
+        add(fastBackButton);
         add(backButton);
         add(playButton);
         add(forwardButton);
+        add(fastforwardButton);
         add(skipButton);
 
         // INIT
         buttonsPressed = new HashMap<>();
         buttonsPressed.put("Restart", false);
+        buttonsPressed.put("FastBack", false);
         buttonsPressed.put("Back", false);
         buttonsPressed.put("Play", false);
         buttonsPressed.put("Forward", false);
+        buttonsPressed.put("FastForward", false);
         buttonsPressed.put("Skip", false);
     }
 
     public void resetButtons()
     {
         buttonsPressed.replace("Restart", false);
+        buttonsPressed.replace("FastBack", false);
         buttonsPressed.replace("Back", false);
         buttonsPressed.replace("Play", false);
         buttonsPressed.replace("Forward", false);
+        buttonsPressed.replace("FastForward", false);
         buttonsPressed.replace("Skip", false);
     }
 
@@ -58,6 +70,10 @@ public class ButtonsPanel extends JPanel implements ActionListener
         if(e.getSource() == restartButton)
         {
             buttonsPressed.replace("Restart", true);
+        }
+        if(e.getSource() == fastBackButton)
+        {
+            buttonsPressed.replace("FastBack", true);
         }
         if(e.getSource() == backButton)
         {
@@ -70,6 +86,10 @@ public class ButtonsPanel extends JPanel implements ActionListener
         if(e.getSource() == forwardButton)
         {
             buttonsPressed.replace("Forward", true);
+        }
+        if(e.getSource() == fastforwardButton)
+        {
+            buttonsPressed.replace("FastForward", true);
         }
         if(e.getSource() == skipButton)
         {
