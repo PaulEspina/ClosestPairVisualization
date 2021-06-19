@@ -56,4 +56,9 @@ public class Display
     {
         return buttonsPanel;
     }
+
+    public CodeSim getCodeSim()
+    {
+        return codeSim;
+    }
 }
