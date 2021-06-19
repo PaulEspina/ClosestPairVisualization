@@ -25,6 +25,7 @@ public class ClosestPair implements Runnable
     private int processIndex;
     private boolean play;
     private final double answer;
+    private double closest;
 
     public ClosestPair(Point[] points, ArrayList<StepData> stepData, double answer)
     {
@@ -34,12 +35,12 @@ public class ClosestPair implements Runnable
         bufferStrategy = null;
         graphics = null;
         thread = null;
-
         numOfPoints = points.length;
         this.points = points;
         this.stepData = stepData;
         Collections.reverse(stepData);
         this.answer= answer;
+        closest = 0;
         pointersStack = new Stack<>();
         stepIndex = 0;
         processIndex = 0;
@@ -69,6 +70,8 @@ public class ClosestPair implements Runnable
 
         buttons = display.getButtonsPanel();
 
+        closest = Double.MAX_VALUE;
+        dataIndex = 0;
         stepIndex = 0;
         processIndex = 0;
         play = false;
@@ -82,6 +85,8 @@ public class ClosestPair implements Runnable
         if(pointersStack.empty() && processIndex >= processes.length - 1 && dataIndex >= stepData.size() - 1)
         {
             play = false;
+            buttons.getPlayButton().setText("<html><p>&#9654</p></html>");
+            buttons.getPlayButton().setEnabled(false);
             buttons.getRestartButton().setEnabled(true);
             buttons.getForwardButton().setEnabled(true);
             buttons.getSkipButton().setEnabled(true);
@@ -95,10 +100,13 @@ public class ClosestPair implements Runnable
             dataIndex = 0;
             stepIndex = 0;
             processIndex = 0;
+            closest = Double.MAX_VALUE;
+            buttons.getPlayButton().setEnabled(true);
         }
         if(buttons.isPressed("Play"))
         {
             play = !play;
+            buttons.getPlayButton().setText(play ? "<html><p>&#9208</p></html>" : "<html><p>&#9654</p></html>");
             buttons.getRestartButton().setEnabled(!play);
             buttons.getForwardButton().setEnabled(!play);
             buttons.getSkipButton().setEnabled(!play);
@@ -224,6 +232,10 @@ public class ClosestPair implements Runnable
                 case 10:
                     graphics.setColor(Color.ORANGE);
                     graphics.drawString("Min: " + Math.round(data.min), middlePoint.x, 100);
+                    if(data.min < closest)
+                    {
+                        closest = data.min;
+                    }
                 case 9:
                     graphics.setColor(Color.YELLOW);
                     if(data.stripQ != null && data.stripQ.length != 0)
@@ -269,12 +281,18 @@ public class ClosestPair implements Runnable
             }
         }
 
-        // Print Final Answer
+        graphics.setFont(new Font("Consolas", Font.BOLD, 20));
         if(pointersStack.empty() && dataIndex >= stepData.size() - 1 && processIndex >= processes.length - 1)
         {
-            graphics.setFont(new Font("Consolas", Font.BOLD, 20));
+            // Print Final Answer
             graphics.setColor(Color.BLACK);
             graphics.drawString("Answer:" + answer, 10, 20);
+        }
+        else if(closest != Double.MAX_VALUE)
+        {
+            // Print Current Closest Distance
+            graphics.setColor(Color.BLACK);
+            graphics.drawString("Closest So Far:" + closest, 10, 20);
         }
 
         // END DRAW
@@ -288,7 +306,7 @@ public class ClosestPair implements Runnable
     {
         init();
 
-        int fps = 30;
+        int fps = 15;
         double timePerTick = 1000000000 / (double) fps;
         double delta = 0;
         long now;
