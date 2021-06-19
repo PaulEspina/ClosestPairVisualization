@@ -1,7 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.HashMap;
 
-public class Display
+public class Display implements ActionListener
 {
     private final int WIDTH = 500, HEIGHT = 500;
 
@@ -14,6 +17,8 @@ public class Display
     private final JButton backButton;
     private final JButton forwardButton;
     private final JButton skipButton;
+
+    private HashMap<String, Boolean> buttonsPressed;
 
     public Display()
     {
@@ -43,10 +48,15 @@ public class Display
         buttonPanel.setBorder(BorderFactory.createLineBorder(new Color(5, 3, 35)));
         buttonPanel.setBackground(new Color(30, 10, 75));
         restartButton = new Button("<html><p>&#9198</p></html>");
+        restartButton.addActionListener(this);
         backButton = new Button("<");
+        backButton.addActionListener(this);
         playButton = new Button("<html><p>&#9654</p></html>");
+        playButton.addActionListener(this);
         forwardButton = new Button(">");
+        forwardButton.addActionListener(this);
         skipButton = new Button("<html><p>&#9197</p></html>");
+        skipButton.addActionListener(this);
         buttonPanel.add(restartButton);
         buttonPanel.add(backButton);
         buttonPanel.add(playButton);
@@ -59,6 +69,48 @@ public class Display
         frame.pack();
         frame.setVisible(true);
         // END FRAME
+
+        // INIT
+        buttonsPressed = new HashMap<>();
+        buttonsPressed.put("Restart", false);
+        buttonsPressed.put("Back", false);
+        buttonsPressed.put("Play", false);
+        buttonsPressed.put("Forward", false);
+        buttonsPressed.put("Skip", false);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e)
+    {
+        if(e.getSource() == restartButton)
+        {
+            buttonsPressed.replace("Restart", true);
+        }
+        if(e.getSource() == backButton)
+        {
+            buttonsPressed.replace("Back", true);
+        }
+        if(e.getSource() == playButton)
+        {
+            buttonsPressed.replace("Play", true);
+        }
+        if(e.getSource() == forwardButton)
+        {
+            buttonsPressed.replace("Forward", true);
+        }
+        if(e.getSource() == skipButton)
+        {
+            buttonsPressed.replace("Skip", true);
+        }
+    }
+
+    public void resetButtons()
+    {
+        buttonsPressed.replace("Restart", false);
+        buttonsPressed.replace("Back", false);
+        buttonsPressed.replace("Play", false);
+        buttonsPressed.replace("Forward", false);
+        buttonsPressed.replace("Skip", false);
     }
 
     public JFrame getFrame() {
@@ -67,5 +119,10 @@ public class Display
 
     public Canvas getCanvas() {
         return canvas;
+    }
+
+    public boolean isPressed(String key)
+    {
+        return buttonsPressed.get(key);
     }
 }
