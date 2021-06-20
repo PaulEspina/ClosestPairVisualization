@@ -65,21 +65,41 @@ public class ClosestPair implements Runnable
         points = new Point[50];
         for(int i = 0; i < points.length; i++)
         {
-            points[i] = new Point(random.nextInt(500), random.nextInt(500));
+            Integer x = null, y = null;
+            boolean flag = true;
+            while(flag)
+            {
+                flag = false;
+                x = random.nextInt(500);
+                y = random.nextInt(500);
+                for(int j = 0; j < i; j++)
+                {
+                    Point p = points[j];
+                    if(x == p.x && y == p.y)
+                    {
+                        flag = true;
+                        break;
+                    }
+                }
+            }
+            points[i] = new Point(x, y);
         }
 
-        Point[] pointsY = points.clone();
         QuickSort.sort(points, 0);
+        Point[] pointsY = points.clone();
         QuickSort.sort(pointsY, 1);
 
         answer = Algorithm.solve(points, pointsY, stepData);
         Collections.reverse(stepData);
+
+        System.out.println(answer);
 
         closest = Double.MAX_VALUE;
         dataIndex = 0;
         stepIndex = 0;
         processIndex = 0;
         play = false;
+        buttons.getPlayButton().setText("PLAY");
         buttons.getRestartButton().setEnabled(false);
         buttons.getPlayButton().setEnabled(true);
         buttons.getForwardButton().setEnabled(true);
@@ -107,14 +127,11 @@ public class ClosestPair implements Runnable
         {
             play = false;
             buttons.getPlayButton().setText("PLAY");
+            buttons.getNewButton().setEnabled(true);
             buttons.getPlayButton().setEnabled(false);
             buttons.getRestartButton().setEnabled(true);
             buttons.getForwardButton().setEnabled(false);
             buttons.getSkipButton().setEnabled(false);
-        }
-        if(buttons.isPressed("New"))
-        {
-            createPoints();
         }
         if(buttons.isPressed("Restart") && !play)
         {
@@ -139,6 +156,7 @@ public class ClosestPair implements Runnable
             buttons.getRestartButton().setEnabled(!play);
             buttons.getForwardButton().setEnabled(!play);
             buttons.getSkipButton().setEnabled(!play);
+            buttons.getNewButton().setEnabled(!play);
         }
         if((buttons.isPressed("Forward") && stepIndex < stepData.size()) || play)
         {
@@ -192,6 +210,7 @@ public class ClosestPair implements Runnable
                     }
                 }
             }
+            buttons.getNewButton().setEnabled(true);
             buttons.getPlayButton().setEnabled(false);
             buttons.getRestartButton().setEnabled(true);
             buttons.getForwardButton().setEnabled(false);
@@ -237,7 +256,7 @@ public class ClosestPair implements Runnable
         // Draw Points
         for(Point point : points)
         {
-            graphics.drawOval(point.x - 2, point.y - 2, 4, 4);
+            graphics.fillRect(point.x - 1, point.y - 1, 2, 2);
         }
 
         // Draw Previous Array Bounds
@@ -284,13 +303,13 @@ public class ClosestPair implements Runnable
                     graphics.setColor(Color.GREEN);
                     for(Point p : data.stripP)
                     {
-                        graphics.drawOval(p.x - 2, p.y - 2, 4, 4);
+                        graphics.fillRect(p.x - 1, p.y - 1, 2, 2);
 
                     }
                     graphics.setColor(Color.YELLOW);
                     for(Point q : data.stripQ)
                     {
-                        graphics.drawOval(q.x - 2, q.y - 2, 4, 4);
+                        graphics.fillRect(q.x - 1, q.y - 1, 2, 2);
                     }
                 case 6:
                     graphics.setColor(Color.BLACK);
@@ -337,7 +356,7 @@ public class ClosestPair implements Runnable
     public void run()
     {
         init();
-        int fps = 10;
+        int fps = 5;
         double timePerTick = 1000000000 / (double) fps;
         double delta = 0;
         long now;
@@ -351,8 +370,15 @@ public class ClosestPair implements Runnable
             lastTime = now;
             if(delta >= 1)
             {
-                update();
-                render();
+                if(buttons.isPressed("New"))
+                {
+                    createPoints();
+                }
+                else
+                {
+                    update();
+                    render();
+                }
                 buttons.resetButtons();
                 delta--;
             }
