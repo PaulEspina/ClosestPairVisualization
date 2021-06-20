@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Random;
 import java.util.Stack;
 
 public class ClosestPair implements Runnable
@@ -15,19 +16,18 @@ public class ClosestPair implements Runnable
     private Thread thread;
     private int width, height;
 
-    private final int numOfPoints;
-    private final Point[] points;
-    private final ArrayList<StepData> stepData;
-    private final Stack<int[]> pointersStack;
+    private Point[] points;
+    private ArrayList<StepData> stepData;
+    private Stack<int[]> pointersStack;
     private final int[][] processes;
     private int dataIndex;
     private int stepIndex;
     private int processIndex;
     private boolean play;
-    private final double answer;
+    private double answer;
     private double closest;
 
-    public ClosestPair(Point[] points, ArrayList<StepData> stepData, double answer)
+    public ClosestPair()
     {
         running = false;
         display = null;
@@ -35,11 +35,6 @@ public class ClosestPair implements Runnable
         bufferStrategy = null;
         graphics = null;
         thread = null;
-        numOfPoints = points.length;
-        this.points = points;
-        this.stepData = stepData;
-        Collections.reverse(stepData);
-        this.answer= answer;
         closest = 0;
         pointersStack = new Stack<>();
         stepIndex = 0;
@@ -61,6 +56,36 @@ public class ClosestPair implements Runnable
         play = false;
     }
 
+    private void createPoints()
+    {
+        pointersStack = new Stack<>();
+        stepData = new ArrayList<>();
+
+        Random random = new Random();
+        points = new Point[50];
+        for(int i = 0; i < points.length; i++)
+        {
+            points[i] = new Point(random.nextInt(500), random.nextInt(500));
+        }
+
+        Point[] pointsY = points.clone();
+        QuickSort.sort(points, 0);
+        QuickSort.sort(pointsY, 1);
+
+        answer = Algorithm.solve(points, pointsY, stepData);
+        Collections.reverse(stepData);
+
+        closest = Double.MAX_VALUE;
+        dataIndex = 0;
+        stepIndex = 0;
+        processIndex = 0;
+        play = false;
+        buttons.getRestartButton().setEnabled(false);
+        buttons.getPlayButton().setEnabled(true);
+        buttons.getForwardButton().setEnabled(true);
+        buttons.getSkipButton().setEnabled(true);
+    }
+
     private void init()
     {
         display = new Display();
@@ -70,12 +95,7 @@ public class ClosestPair implements Runnable
 
         buttons = display.getButtonsPanel();
 
-        closest = Double.MAX_VALUE;
-        dataIndex = 0;
-        stepIndex = 0;
-        processIndex = 0;
-        play = false;
-        buttons.getRestartButton().setEnabled(false);
+        createPoints();
     }
 
     private void update()
@@ -86,11 +106,15 @@ public class ClosestPair implements Runnable
         if(pointersStack.empty() && processIndex >= processes.length - 1 && dataIndex >= stepData.size() - 1)
         {
             play = false;
-            buttons.getPlayButton().setText("<html><p>&#9654</p></html>");
+            buttons.getPlayButton().setText("PLAY");
             buttons.getPlayButton().setEnabled(false);
             buttons.getRestartButton().setEnabled(true);
             buttons.getForwardButton().setEnabled(false);
             buttons.getSkipButton().setEnabled(false);
+        }
+        if(buttons.isPressed("New"))
+        {
+            createPoints();
         }
         if(buttons.isPressed("Restart") && !play)
         {
@@ -111,7 +135,7 @@ public class ClosestPair implements Runnable
         if(buttons.isPressed("Play"))
         {
             play = !play;
-            buttons.getPlayButton().setText(play ? "<html><p>&#9208</p></html>" : "<html><p>&#9654</p></html>");
+            buttons.getPlayButton().setText(play ? "PAUSE" : "PLAY");
             buttons.getRestartButton().setEnabled(!play);
             buttons.getForwardButton().setEnabled(!play);
             buttons.getSkipButton().setEnabled(!play);
@@ -211,9 +235,9 @@ public class ClosestPair implements Runnable
         }
 
         // Draw Points
-        for(int i = 0; i < numOfPoints; i++)
+        for(Point point : points)
         {
-            graphics.drawOval(points[i].x - 2, points[i].y - 2, 4, 4);
+            graphics.drawOval(point.x - 2, point.y - 2, 4, 4);
         }
 
         // Draw Previous Array Bounds
@@ -222,7 +246,6 @@ public class ClosestPair implements Runnable
             StepData data = stepData.get(pointersStack.peek()[0]);
             Point lowPoint = data.leftPoints[0];
             Point highPoint = data.rightPoints[data.rightPoints.length - 1];
-            Point middlePoint = data.middlePoint;
             graphics.setColor(Color.MAGENTA);
             graphics.drawLine(lowPoint.x, 0, lowPoint.x, height);
             graphics.drawLine(highPoint.x, 0, highPoint.x, height);
@@ -314,8 +337,7 @@ public class ClosestPair implements Runnable
     public void run()
     {
         init();
-        // TODO - create slider for FPS
-        int fps = 15;
+        int fps = 10;
         double timePerTick = 1000000000 / (double) fps;
         double delta = 0;
         long now;
