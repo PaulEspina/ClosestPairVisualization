@@ -3,7 +3,7 @@ import java.awt.*;
 
 public class Display
 {
-    private final int WIDTH = 500, HEIGHT = 500;
+    public final int WIDTH = 500, HEIGHT = 500;
 
     private final JFrame frame;
     private final Canvas canvas;
