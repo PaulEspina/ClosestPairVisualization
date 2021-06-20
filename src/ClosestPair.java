@@ -75,6 +75,7 @@ public class ClosestPair implements Runnable
         stepIndex = 0;
         processIndex = 0;
         play = false;
+        buttons.getRestartButton().setEnabled(false);
     }
 
     private void update()
@@ -88,8 +89,8 @@ public class ClosestPair implements Runnable
             buttons.getPlayButton().setText("<html><p>&#9654</p></html>");
             buttons.getPlayButton().setEnabled(false);
             buttons.getRestartButton().setEnabled(true);
-            buttons.getForwardButton().setEnabled(true);
-            buttons.getSkipButton().setEnabled(true);
+            buttons.getForwardButton().setEnabled(false);
+            buttons.getSkipButton().setEnabled(false);
         }
         if(buttons.isPressed("Restart") && !play)
         {
@@ -102,6 +103,10 @@ public class ClosestPair implements Runnable
             processIndex = 0;
             closest = Double.MAX_VALUE;
             buttons.getPlayButton().setEnabled(true);
+            buttons.getPlayButton().setEnabled(true);
+            buttons.getRestartButton().setEnabled(false);
+            buttons.getForwardButton().setEnabled(true);
+            buttons.getSkipButton().setEnabled(true);
         }
         if(buttons.isPressed("Play"))
         {
@@ -163,6 +168,10 @@ public class ClosestPair implements Runnable
                     }
                 }
             }
+            buttons.getPlayButton().setEnabled(false);
+            buttons.getRestartButton().setEnabled(true);
+            buttons.getForwardButton().setEnabled(false);
+            buttons.getSkipButton().setEnabled(false);
         }
 
         // Sets scrollbar to follow process index
@@ -305,7 +314,7 @@ public class ClosestPair implements Runnable
     public void run()
     {
         init();
-
+        // TODO - create slider for FPS
         int fps = 15;
         double timePerTick = 1000000000 / (double) fps;
         double delta = 0;
