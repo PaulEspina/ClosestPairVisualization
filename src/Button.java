@@ -8,6 +8,7 @@ public class Button extends JButton
         setBackground(Color.BLACK);
         setForeground(Color.WHITE);
         setFont(new Font("Arial", Font.BOLD, 12));
+        setPreferredSize(new Dimension(100, 25));
         setBorderPainted(false);
         setFocusPainted(false);
         setFocusable(false);

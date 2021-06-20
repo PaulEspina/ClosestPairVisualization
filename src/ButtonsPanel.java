@@ -8,6 +8,7 @@ public class ButtonsPanel extends JPanel implements ActionListener
 {
     private HashMap<String, Boolean> buttonsPressed;
 
+    private final JButton newButton;
     private final JButton restartButton;
     private final JButton playButton;
     private final JButton forwardButton;
@@ -17,14 +18,19 @@ public class ButtonsPanel extends JPanel implements ActionListener
     {
         setBorder(BorderFactory.createLineBorder(new Color(5, 3, 35)));
         setBackground(new Color(30, 10, 75));
-        restartButton = new Button("<html><p>&#9198</p></html>");
+
+        newButton = new Button("NEW");
+        newButton.addActionListener(this);
+        restartButton = new Button("RESTART");
         restartButton.addActionListener(this);
-        playButton = new Button("<html><p>&#9654</p></html>");
+        playButton = new Button("PLAY");
         playButton.addActionListener(this);
-        forwardButton = new Button("<html><p>&#10145</p></html>");
+        forwardButton = new Button("STEP");
         forwardButton.addActionListener(this);
-        skipButton = new Button("<html><p>&#9197</p></html>");
+        skipButton = new Button("SKIP");
         skipButton.addActionListener(this);
+
+        add(newButton);
         add(restartButton);
         add(playButton);
         add(forwardButton);
@@ -32,6 +38,7 @@ public class ButtonsPanel extends JPanel implements ActionListener
 
         // INIT
         buttonsPressed = new HashMap<>();
+        buttonsPressed.put("New", false);
         buttonsPressed.put("Restart", false);
         buttonsPressed.put("Play", false);
         buttonsPressed.put("Forward", false);
@@ -40,6 +47,7 @@ public class ButtonsPanel extends JPanel implements ActionListener
 
     public void resetButtons()
     {
+        buttonsPressed.replace("New", false);
         buttonsPressed.replace("Restart", false);
         buttonsPressed.replace("Play", false);
         buttonsPressed.replace("Forward", false);
@@ -49,6 +57,10 @@ public class ButtonsPanel extends JPanel implements ActionListener
     @Override
     public void actionPerformed(ActionEvent e)
     {
+        if(e.getSource() == newButton)
+        {
+            buttonsPressed.replace("New", true);
+        }
         if(e.getSource() == restartButton)
         {
             buttonsPressed.replace("Restart", true);
@@ -75,6 +87,11 @@ public class ButtonsPanel extends JPanel implements ActionListener
     public boolean isPressed()
     {
         return buttonsPressed.containsValue(true);
+    }
+
+    public JButton getNewButton()
+    {
+        return newButton;
     }
 
     public JButton getRestartButton()
