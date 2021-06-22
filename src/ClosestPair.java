@@ -1,10 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 
 public class ClosestPair implements Runnable
 {
@@ -61,8 +58,9 @@ public class ClosestPair implements Runnable
         pointersStack = new Stack<>();
         stepData = new ArrayList<>();
 
+        // Creates a random set of points
         Random random = new Random();
-        points = new Point[50];
+        points = new Point[20];
         for(int i = 0; i < points.length; i++)
         {
             Integer x = null, y = null;
@@ -88,12 +86,13 @@ public class ClosestPair implements Runnable
         QuickSort.sort(points, 0);
         Point[] pointsY = points.clone();
         QuickSort.sort(pointsY, 1);
-
         answer = Algorithm.solve(points, pointsY, stepData);
         Collections.reverse(stepData);
 
+        System.out.println(Arrays.toString(points));
         System.out.println(answer);
 
+        // Initializes values to be used in simulation
         closest = Double.MAX_VALUE;
         dataIndex = 0;
         stepIndex = 0;
@@ -123,7 +122,7 @@ public class ClosestPair implements Runnable
         CodeSim codeSim = display.getCodeSim();
         JScrollBar scrollBar = codeSim.getScrollPane().getVerticalScrollBar();
 
-        if(pointersStack.empty() && processIndex >= processes.length - 1 && dataIndex >= stepData.size() - 1)
+        if(pointersStack.empty() && processIndex >= processes.length - 1 && dataIndex >= stepData.size() - 1) // this will be true when the simulation reaches the end
         {
             play = false;
             buttons.getPlayButton().setText("PLAY");
@@ -133,7 +132,7 @@ public class ClosestPair implements Runnable
             buttons.getForwardButton().setEnabled(false);
             buttons.getSkipButton().setEnabled(false);
         }
-        if(buttons.isPressed("Restart") && !play)
+        if(buttons.isPressed("Restart") && !play) // this will restart the simulation
         {
             while(!pointersStack.empty())
             {
@@ -149,7 +148,7 @@ public class ClosestPair implements Runnable
             buttons.getForwardButton().setEnabled(true);
             buttons.getSkipButton().setEnabled(true);
         }
-        if(buttons.isPressed("Play"))
+        if(buttons.isPressed("Play")) // this will start the simulation
         {
             play = !play;
             buttons.getPlayButton().setText(play ? "PAUSE" : "PLAY");
@@ -158,10 +157,10 @@ public class ClosestPair implements Runnable
             buttons.getSkipButton().setEnabled(!play);
             buttons.getNewButton().setEnabled(!play);
         }
-        if((buttons.isPressed("Forward") && stepIndex < stepData.size()) || play)
+        if((buttons.isPressed("Forward") && stepIndex < stepData.size()) || play) // will step the simulation forward as long as it is possible to step forward
         {
 
-            if(!pointersStack.empty() && (processIndex >= processes.length - 1 || stepData.get(stepIndex).p.length <= 3))
+            if(!pointersStack.empty() && (processIndex >= processes.length - 1 || stepData.get(stepIndex).p.length <= 3)) // if the length of the points array is less than 3, go back to previous step (pop the stack)
             {
                 int[] indices = pointersStack.pop();
                 stepIndex = indices[0];
@@ -169,7 +168,7 @@ public class ClosestPair implements Runnable
             }
             else if(processIndex < processes.length - 1)
             {
-                if(processIndex == 3 || processIndex == 4)
+                if(processIndex == 3 || processIndex == 4) // if a recursive call is reached, push the step to the stack
                 {
                     pointersStack.push(new int[]{stepIndex, processIndex + 1});
                     stepIndex = ++dataIndex;
@@ -181,35 +180,15 @@ public class ClosestPair implements Runnable
                 }
             }
         }
-        if(buttons.isPressed("Skip") && !play)
+        if(buttons.isPressed("Skip") && !play) // skips to end of simulation
         {
-            play = true;
-            while(play)
+            while(!pointersStack.empty())
             {
-                if(pointersStack.empty() && processIndex >= processes.length - 1)
-                {
-                    play = false;
-                }
-                if(!pointersStack.empty() && (processIndex >= processes.length - 1 || stepData.get(stepIndex).p.length <= 3))
-                {
-                    int[] indices = pointersStack.pop();
-                    stepIndex = indices[0];
-                    processIndex = indices[1];
-                }
-                else if(processIndex < processes.length - 1)
-                {
-                    if(processIndex == 3 || processIndex == 4)
-                    {
-                        pointersStack.push(new int[]{stepIndex, processIndex + 1});
-                        stepIndex = ++dataIndex;
-                        processIndex = 0;
-                    }
-                    else
-                    {
-                        processIndex++;
-                    }
-                }
+                pointersStack.pop();
             }
+            processIndex = processes.length - 1;
+            stepIndex = 0;
+            dataIndex = stepData.size() - 1;
             buttons.getNewButton().setEnabled(true);
             buttons.getPlayButton().setEnabled(false);
             buttons.getRestartButton().setEnabled(true);
@@ -356,7 +335,9 @@ public class ClosestPair implements Runnable
     public void run()
     {
         init();
-        int fps = 5;
+
+        // this block of code set's up the rendering timing so that it is consistent
+        int fps = 5; // the simulation will run at 5 frames per second
         double timePerTick = 1000000000 / (double) fps;
         double delta = 0;
         long now;
